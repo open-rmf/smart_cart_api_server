@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "smart-cart-api-server"
+version = "0.0.0"
+description = "Provides an interfacing point for SmartCart integration with RMF."
+authors = ["Arjo Chakravarty <arjoc@intrinsic.ai>"]
+license = "Apache 2.0"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.110.2"
+uvicorn = {extras = ["standard"], version = "^0.29.0"}
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
