@@ -1,10 +1,13 @@
-from ..models.cart_authorization import AuthorizationRequest, AuthorizationResponse
-from ..models.cart_status import CartStatus
-from ..models.destination_complete import DestinationComplete
-from ..models.robot_status import RobotStatus
-from ..models.task_status import TaskStatus
-from fastapi import FastAPI, HTTPException, Depends
-from datetime import datetime
+from smart_cart_api_server.models.token import Credentials, TokenResponse
+from smart_cart_api_server.models.cart_authorization import AuthorizationRequest, AuthorizationResponse
+from smart_cart_api_server.models.cart_status import CartStatus
+from smart_cart_api_server.models.destination_complete import DestinationComplete
+from smart_cart_api_server.models.robot_status import RobotStatus
+from smart_cart_api_server.models.task_status import TaskStatus
+from fastapi import FastAPI, HTTPException, Header
+from fastapi.responses import JSONResponse
+from datetime import datetime, timedelta
+from typing import Annotated, Optional
 
 app = FastAPI()
 
@@ -26,7 +29,7 @@ def verify_token(token: str):
     return True
 
 @app.post("/compartment_authorization")
-async def request_compartment_authorization(data: AuthorizationRequest, token: str = Depends(verify_token)) -> AuthorizationResponse:
+async def request_compartment_authorization(data: AuthorizationRequest, token: Annotated[str, Header()]) -> AuthorizationResponse:
     if not verify_token(token):
         raise HTTPException(status_code=401, detail="Unauthorized")
 
@@ -34,7 +37,7 @@ async def request_compartment_authorization(data: AuthorizationRequest, token: s
     return authorization_response
 
 @app.post("/cart_status_update")
-async def update_cart_status(cart_status: CartStatus, token: str = Depends(verify_token)) -> CartStatus:
+async def update_cart_status(cart_status: CartStatus, token: Annotated[str, Header()]) -> CartStatus:
     if not verify_token(token):
         raise HTTPException(status_code=401, detail="Unauthorized")
 
@@ -53,7 +56,7 @@ def notify_rmf_destination_complete(cart_id: str, destination: str):
     print(f"RMF notified: Cart {cart_id} completed destination {destination}")
 
 @app.post("/destination_complete")
-async def handle_destination_complete(data: DestinationComplete, token: str = Depends(verify_token)):
+async def handle_destination_complete(data: DestinationComplete, token: Annotated[str, Header()]):
     if not verify_token(token):
         raise HTTPException(status_code=401, detail="Unauthorized")
 
@@ -80,7 +83,7 @@ def get_robot_status(robot_id: str) -> RobotStatus:
     )
 
 @app.get("/robot_status/{robot_id}")
-async def get_status(robot_id: str, token: str = Depends(verify_token)) -> RobotStatus:
+async def get_status(robot_id: str, token: Annotated[str, Header()]) -> RobotStatus:
     if not verify_token(token):
         raise HTTPException(status_code=401, detail="Unauthorized")
 
@@ -114,7 +117,7 @@ def get_task_status(task_id: str) -> TaskStatus:
 
 
 @app.get("/task_status/{task_id}")
-async def retrieve_task_status(task_id: str, token: str = Depends(verify_token)) -> TaskStatus:
+async def retrieve_task_status(task_id: str, token: Annotated[str, Header()]) -> TaskStatus:
     if not verify_token(token):
         raise HTTPException(status_code=401, detail="Unauthorized")
 
@@ -124,3 +127,24 @@ async def retrieve_task_status(task_id: str, token: str = Depends(verify_token))
     except Exception as e:
         # Handle potential errors when communicating with RMF
         raise HTTPException(status_code=500, detail=f"Error retrieving task status from RMF: {str(e)}")
+
+# Placeholder for RMF authentication function
+def authenticate_and_get_token(username: str, password: str) -> Optional[TokenResponse]:
+    # Your logic to authenticate with RMF and generate a token
+    if username == "admin" and password == "admin":  # Replace with actual authentication
+        expiration = datetime.now() + timedelta(days=2)  # Adjust expiration as needed
+        return TokenResponse(
+            token="sample_jwt_token",
+            creationDateTime=datetime.now(),
+            expirationDateTime=expiration
+        )
+    return None  # Authentication failure
+
+@app.post("/get_token")
+async def get_token(credentials: Credentials) -> TokenResponse:
+    token_data = authenticate_and_get_token(credentials.username, credentials.password)
+
+    if token_data:
+        return token_data
+    else:
+        raise HTTPException(status_code=401, detail="The username or password is incorrect.")
