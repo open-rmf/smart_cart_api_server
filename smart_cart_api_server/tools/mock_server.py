@@ -6,6 +6,7 @@ from smart_cart_api_server.models.robot_status import RobotStatus
 from smart_cart_api_server.models.task_status import TaskStatus
 from fastapi import FastAPI, HTTPException, Header
 from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
 from datetime import datetime, timedelta
 from typing import Annotated, Optional
 
@@ -148,3 +149,13 @@ async def get_token(credentials: Credentials) -> TokenResponse:
         return token_data
     else:
         raise HTTPException(status_code=401, detail="The username or password is incorrect.")
+
+
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request, exc):
+    return JSONResponse({"message": str(exc.detail), "code": exc.status_code}, status_code=exc.status_code)
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request, exc):
+    return JSONResponse({"message": str(exc.detail), "code": exc.status_code}, status_code=exc.status_code)
