@@ -9,7 +9,7 @@ def parse_task_status(task_state: str) -> TaskStatus:
     This function parses a task state coming in from a json string into the robots current location.
     Note: This function makes some pretty strong assumptions about the task structure. Namely that:
     - Every "Perform Action" is a pickup/dropoff location
-    - All  pickups/drop offs can be gathered by the GoToPlace command.
+    - The "Perform Action" provides a way to
     """
     tasks = json.loads(task_state)
     state = TaskState.model_validate(tasks[0])
@@ -17,6 +17,23 @@ def parse_task_status(task_state: str) -> TaskStatus:
     locations = []
     loc_idxs = {}
     next_loc_idx = {}
+
+    if state.phases is None:
+        return TaskStatus(
+            taskId=state.booking.id,
+            dateTime=datetime.datetime.fromtimestamp(
+                state.unix_millis_start_time, tz=datetime.timezone.utc),
+            robotId=state.assigned_to.name,
+            fleetId=state.assigned_to.group,
+            cartId=state.assigned_to.name, # For now only use cart_id
+            destinations=locations,
+            currentLocationIndex=None,
+            travellingToIndex=None,
+            authorizedDepartures=[],
+            unauthorizedDepartures=[],
+            status=state.status
+        )
+
     for p in sorted(state.phases.keys()):
         ### LOTS OF MAGIC
         x = json.loads(str(state.phases[p].detail)[6:-1])[0]

@@ -65,3 +65,12 @@ class TestDataSummary(unittest.TestCase):
         self.assertEqual(task_status.currentLocationIndex, None)
         self.assertEqual(task_status.travellingToIndex, 0)
 
+    def test_parse_queued_travelling_task_status(self):
+        test_string = {'assigned_to': {'group': 'mir_mc_cssd', 'name': 'cssdmir001'}, 'booking': {'id': 'compose.dispatch-16', 'unix_millis_earliest_start_time': 0}, 'category': 'rmf_milkrun_delivery', 'detail': '', 'original_estimate_millis': 108086, 'status': 'queued', 'unix_millis_finish_time': 2000256, 'unix_millis_start_time': 1892170}
+        task_status = parse_task_status(json.dumps([test_string]))
+        self.assertEqual(task_status.authorizedDepartures, [])
+        self.assertEqual(task_status.destinations, [])
+        self.assertEqual(task_status.cartId, "cssdmir001")
+        self.assertEqual(task_status.status, "queued")
+        self.assertEqual(task_status.currentLocationIndex, None)
+        self.assertEqual(task_status.travellingToIndex, None)
