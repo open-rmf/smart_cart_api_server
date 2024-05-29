@@ -2,9 +2,21 @@ from api_server.models.rmf_api.task_state import TaskState, Status
 from smart_cart_api_server.models.task_status import TaskStatus, TaskDestination
 import json
 import datetime
+import aiohttp
 from parse import parse
+from fastapi import HTTPException
 
-def parse_task_status(task_state: str) -> TaskStatus:
+async def get_task_status(task_id: str, api_server: str) -> TaskStatus|None:
+    async with aiohttp.ClientSession() as session:
+        async with session.get(f"{api_server}tasks?task_id={curr_robot.task_id}") as response:
+            if response.status != 200:
+                raise  HTTPException(status_code=500, detail=f"got error from remote server")
+
+            assigned_task = parse_task_status(await response.text())
+
+            return assigned_task
+
+def parse_task_status(task_state: str) -> TaskStatus|None:
     """
     This function parses a task state coming in from a json string into the robots current location.
     Note: This function makes some pretty strong assumptions about the task structure. Namely that:
@@ -12,6 +24,10 @@ def parse_task_status(task_state: str) -> TaskStatus:
     - The "Perform Action" provides a way to
     """
     tasks = json.loads(task_state)
+
+    if len(tasks) == 0:
+        return None
+
     state = TaskState.model_validate(tasks[0])
 
     locations = []

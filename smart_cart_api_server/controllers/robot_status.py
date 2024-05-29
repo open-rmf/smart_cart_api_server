@@ -1,14 +1,13 @@
 from smart_cart_api_server.models.robot_status import RobotStatus
-from smart_cart_api_server.controllers.task_status import parse_task_status
-from api_server.models.rmf_api.task_state import TaskState
+from smart_cart_api_server.controllers.task_status import get_task_status
 from api_server.models.rmf_api.fleet_state import FleetState
 import aiohttp
 import datetime
 import json
+from fastapi import HTTPException
 
 
-
-async def get_robot_status(robot_id: str, api_server = "http://localhost:8000/") -> RobotStatus:
+async def get_robot_status(robot_id: str, api_server = "http://localhost:8000/") -> None|RobotStatus:
     """
     Retrieve robot status given robot_id
     """
@@ -28,8 +27,7 @@ async def get_robot_status(robot_id: str, api_server = "http://localhost:8000/")
         assigned_task = None
 
         if curr_robot.task_id:
-            async with session.get(f"{api_server}tasks?task_id={curr_robot.task_id}") as response:
-                assigned_task = parse_task_status(await response.text())
+            assigned_task = await get_task_status(curr_robot.task_id, api_server)
 
         return RobotStatus(
             dateTime=datetime.datetime.now(),

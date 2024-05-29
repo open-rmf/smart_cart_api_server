@@ -1,13 +1,14 @@
 from smart_cart_api_server.models.tables.CardIdADIDTable import AbstractCardIdADIDTable, UserInfo
+from smart_cart_api_server.controllers.robot_status import get_robot_status
 from keycloak import KeycloakAdmin
 from keycloak import KeycloakOpenIDConnection
 from typing import List
 
-def get_cart_location(cart_id: str) -> List[str]:
-    #TODO(arjo) implement logic to pull cart id mapping from the server
-    return []
-
-def get_compartment_authorization(card_id_table: AbstractCardIdADIDTable, keycloak_client: KeycloakOpenIDConnection, cart_id: str, card_id: str) -> bool:
+async def get_compartment_authorization(
+        card_id_table: AbstractCardIdADIDTable,
+        keycloak_client: KeycloakOpenIDConnection,
+        cart_id: str, card_id: str,
+        api_server: str) -> bool:
     user_info = card_id_table.lookup_cardid(card_id)
     if user_info is None:
         return False
@@ -17,5 +18,12 @@ def get_compartment_authorization(card_id_table: AbstractCardIdADIDTable, keyclo
     if keycloak_admin.get_user_id(user_info.adid) is None:
         return False
 
+    status = await get_robot_status()
+
+    if status.currentLocationIndex is None:
+        return False
+
+    if status.destinations[status.currentLocationIndex] not in user_info.waypoints:
+        return False
 
     return True
