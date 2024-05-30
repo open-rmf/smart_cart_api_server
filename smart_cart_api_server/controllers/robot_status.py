@@ -11,11 +11,9 @@ async def get_robot_status(robot_id: str, api_server = "http://localhost:8000/")
     """
     Retrieve robot status given robot_id
     """
-    print("here")
     curr_robot = None
     async with aiohttp.ClientSession() as session:
         async with session.get(f"{api_server}fleets") as response:
-            print("here2")
 
             fleets = json.loads(await response.text())
 
@@ -27,21 +25,16 @@ async def get_robot_status(robot_id: str, api_server = "http://localhost:8000/")
         if curr_robot is None:
             return None
 
-        print("here3")
-
-
         assigned_task = None
 
         if curr_robot.task_id:
             assigned_task = await get_task_status(curr_robot.task_id, api_server)
 
-        print("here4")
-
         return RobotStatus(
             dateTime=datetime.datetime.now(),
             robotId=robot_id,
             batteryPercentage=int(curr_robot.battery * 100),
-            robotState= curr_robot.status,
+            robotState=curr_robot.status.value,
             currentLocation=None,
             travellingTo=None,
             task=assigned_task

@@ -65,7 +65,7 @@ async def handle_destination_complete(data: DestinationComplete, token: Annotate
     if not verify_token(token):
         raise HTTPException(status_code=401, detail="Unauthorized")
     try:
-        notify_rmf_destination_complete(data.cartId, data.completedDestination, api_server_url)
+        await notify_rmf_destination_complete(data.cartId, data.completedDestination, data.success, api_server_url)
         return data  # Echo back the data
     except Exception as e:
         # Proper error handling if communication with RMF fails
