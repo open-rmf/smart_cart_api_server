@@ -8,7 +8,7 @@ from fastapi import HTTPException
 
 async def get_task_status(task_id: str, api_server: str) -> TaskStatus|None:
     async with aiohttp.ClientSession() as session:
-        async with session.get(f"{api_server}tasks?task_id={curr_robot.task_id}") as response:
+        async with session.get(f"{api_server}tasks?task_id={task_id}") as response:
             if response.status != 200:
                 raise  HTTPException(status_code=500, detail=f"got error from remote server")
 
@@ -28,7 +28,7 @@ def parse_task_status(task_state: str) -> TaskStatus|None:
     if len(tasks) == 0:
         return None
 
-    state = TaskState.model_validate(tasks[0])
+    state = TaskState.parse_obj(tasks[0])
 
     locations = []
     loc_idxs = {}
@@ -47,12 +47,12 @@ def parse_task_status(task_state: str) -> TaskStatus|None:
             travellingToIndex=None,
             authorizedDepartures=[],
             unauthorizedDepartures=[],
-            status=state.status
+            status=state.status.value
         )
 
     for p in sorted(state.phases.keys()):
         ### LOTS OF MAGIC
-        x = json.loads(str(state.phases[p].detail)[6:-1])[0]
+        x = json.loads(state.phases[p].detail.__root__)[0]
         if x["category"] == "Perform action":
             res = parse("Performing action wait_until at waypoint [[place:{place}]]", x["detail"])
             loc_idxs[p] = len(locations)
@@ -68,10 +68,11 @@ def parse_task_status(task_state: str) -> TaskStatus|None:
     current_location = None
     traveling_to = None
 
+
     if state.status == Status.underway and state.active is not None:
         #hack
-        st = str(state.active)[5:]
-        detail = json.loads(str(state.phases[st].detail)[6:-1])[0]
+        st = str(state.active.__root__)
+        detail = json.loads(state.phases[st].detail.__root__)[0]
         if detail["category"] == "Perform action":
             current_location = loc_idxs[st]
         else:
@@ -91,5 +92,5 @@ def parse_task_status(task_state: str) -> TaskStatus|None:
         travellingToIndex=traveling_to,
         authorizedDepartures=[],
         unauthorizedDepartures=[],
-        status=state.status
+        status=str(state.status.value)
     )

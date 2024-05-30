@@ -28,7 +28,7 @@ import os
 api_server_url = "http://localhost:8000/"
 if "API_SERVER_URL" in os.environ:
     api_server_url = os.environ["API_SERVER_URL"]
-keycloak_connection = keycloak_from_json("keycloak_config.json")
+#keycloak_connection = keycloak_from_json("keycloak_config.json")
 
 # Connect to CardID Table
 card_table = CSVCardIdADIDTable("CardId.csv")
@@ -55,8 +55,7 @@ async def update_cart_status(cart_status: CartStatus, token: Annotated[str, Head
     # Process the cart status update
     print(f"Received cart status update: {cart_status}")
 
-    # You would typically save the status to a database or
-    # forward the message to RMF here
+    # You would typically save the status to a database
 
     # Return a success response
     return cart_status  # Echo back the received data
