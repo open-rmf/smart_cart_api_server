@@ -11,8 +11,12 @@ python = ">=3.10.4,<3.11.0"
 fastapi = ">=0.109.0,<0.110.0"
 uvicorn = {extras = ["standard"], version = ">=0.28.0,<0.29.0"}
 api_server = {git = "https://github.com/open-rmf/rmf-web.git", subdirectory="packages/api-server"}
+python-keycloak = "^4.0.0"
 
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+keycloak_test = "smart_cart_api_server.tools.keycloak_test:start"
