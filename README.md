@@ -39,3 +39,12 @@ Add a `keycloak_config.json` to your working directory and set `export ENABLE_KE
 }
 ```
 Note: we do need the admin api in order to perform some of the verification.
+
+
+## Mock server
+
+If you need a mock server for development purposes (without running RMF) then you can run the following.
+```
+poetry run uvicorn smart_cart_api_server.tools.mock_server:app --reload --port 9090
+```
+API Docs should be available here at [http:127.0.0.1:9090/docs](http:127.0.0.1:9090/docs).
