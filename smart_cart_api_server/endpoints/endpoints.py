@@ -28,7 +28,10 @@ import os
 api_server_url = "http://localhost:8000/"
 if "API_SERVER_URL" in os.environ:
     api_server_url = os.environ["API_SERVER_URL"]
-#keycloak_connection = keycloak_from_json("keycloak_config.json")
+
+keycloak_connection = None
+if "ENABLE_KEYCLOACK" in os.environ:
+    keycloak_connection = keycloak_from_json("keycloak_config.json")
 
 # Connect to CardID Table
 card_table = CSVCardIdADIDTable("CardId.csv")

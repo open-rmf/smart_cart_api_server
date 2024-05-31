@@ -6,7 +6,7 @@ from typing import List
 
 async def get_compartment_authorization(
         card_id_table: AbstractCardIdADIDTable,
-        keycloak_client: KeycloakOpenIDConnection,
+        keycloak_client: KeycloakOpenIDConnection| None,
         cart_id: str, card_id: str,
         api_server: str) -> bool:
     user_info = card_id_table.lookup_cardid(card_id)
@@ -14,9 +14,10 @@ async def get_compartment_authorization(
         return False
 
     # Check if user exists
-    keycloak_admin = KeycloakAdmin(connection=keycloak_client)
-    if keycloak_admin.get_user_id(user_info.adid) is None:
-        return False
+    if keycloak_client is not None:
+        keycloak_admin = KeycloakAdmin(connection=keycloak_client)
+        if keycloak_admin.get_user_id(user_info.adid) is None:
+            return False
 
     status = await get_robot_status()
 
