@@ -18,5 +18,3 @@ class CartStatus(BaseModel):
     batteryPercentage: int
     compartments: list[Compartment]
     errorState: ErrorState
-
-

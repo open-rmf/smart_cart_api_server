@@ -14,5 +14,3 @@ class AuthorizationResponse(BaseModel):
     cardId: str
     authorizedCompartments: List[str] = []
     unauthorizedCompartments: List[str] = []
-
-
