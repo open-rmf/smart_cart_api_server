@@ -3,17 +3,17 @@ API for smart carts
 
 ## Setting Up
 
-Ensure you have [`poetry`](https://python-poetry.org/) set up. Once that set up clone this project.
+Ensure you have [`poetry`](https://python-poetry.org/) set up. Once that is set up clone this project.
 
 ## Running The Smart-Cart API Server
 
-To run the API server mock for you to develop against simply run:
+To run the API server simply run:
 ```
 poetry run uvicorn smart_cart_api_server.endpoints.endpoints:app --reload --port 9090
 ```
 API Docs should be available here at [http:127.0.0.1:9090/docs](http:127.0.0.1:9090/docs).
 
-You will also be needing to have RMF's `api_server` and RMF running in the background.
+You will need RMF's `api_server` and RMF running in the background.
 The api server endpoint can be set via the `API_SERVER_URL` environment variable.
 
 ## Authenticating Cards via API server
@@ -27,7 +27,7 @@ Note: If there is a change in the file, you will have to restart the server as t
 
 ## Integrating with keycloak and card readers
 
-Add a `keycloak_config.json` to your working directory and set `export ENABLE_KEYCLOACK=1`. It should look like this:
+Add a `keycloak_config.json` to your working directory and set `export ENABLE_KEYCLOACK=1`. The config should look like this:
 ```json
 {
     "server_url": "http://localhost:8080/",
