@@ -23,6 +23,7 @@ have a csv file called `CardId.csv`in order to be able to use it.
 ```
 "card1", "admin", "clinic", "location2", "location3"
 ```
+Note: If there is a change in the file, you will have to restart the server as the file is read only once. The server is stateless so this should not be much of a problem. An example `CardId.csv` is provided. If you want to change card authentication providers, then please extend the `smart_cart_api_server.models.tables.CardIdADIDTable.AbstractCardIdADIDTable` class and update `endpoints.py`.
 
 ## Integrating with keycloak and card readers
 
