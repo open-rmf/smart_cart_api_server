@@ -9,12 +9,20 @@ Ensure you have [`poetry`](https://python-poetry.org/) set up. Once that is set 
 
 To run the API server simply run:
 ```
-poetry run uvicorn smart_cart_api_server.endpoints.endpoints:app --reload --port 9090
+smart_cart_api_server
 ```
-API Docs should be available here at [http:127.0.0.1:9090/docs](http:127.0.0.1:9090/docs).
+API Docs should be available here at [http://127.0.0.1:9090/docs](http:127.0.0.1:9090/docs).
 
 You will need RMF's `api_server` and RMF running in the background.
-The api server endpoint can be set via the `API_SERVER_URL` environment variable.
+The api server endpoint can be set via args or the `API_SERVER_URL` environment variable.
+
+### Dev Server
+
+A dev server with auto reload can be started with
+
+```
+poetry run uvicorn smart_cart_api_server.endpoints.endpoints:app --reload --port 9090
+```
 
 ## Authenticating Cards via API server
 
