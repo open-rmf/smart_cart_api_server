@@ -24,5 +24,6 @@ build-backend = "poetry.core.masonry.api"
 pytest = "^7.4.3"
 
 [tool.poetry.scripts]
+smart_cart_api_server = "smart_cart_api_server.__main__:main"
 keycloak_test = "smart_cart_api_server.tools.keycloak_test:start"
 api_sandbox = "smart_cart_api_server.tools.api_integration_test:start"
