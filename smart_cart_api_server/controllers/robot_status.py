@@ -27,15 +27,21 @@ async def get_robot_status(robot_id: str, api_server = "http://localhost:8000/")
 
         assigned_task = None
 
+        current_location = None
+        travelling_to = None
         if curr_robot.task_id:
             assigned_task = await get_task_status(curr_robot.task_id, api_server)
+            if assigned_task is not None and assigned_task.currentLocationIndex is not None:
+                current_location = assigned_task.destinations[assigned_task.currentLocationIndex]
+            if assigned_task is not None and assigned_task.travellingToIndex is not None:
+                travelling_to = assigned_task.destinations[assigned_task.travellingToIndex]
 
         return RobotStatus(
             dateTime=datetime.datetime.now(),
             robotId=robot_id,
             batteryPercentage=int(curr_robot.battery * 100),
             robotState=curr_robot.status.value,
-            currentLocation=None,
-            travellingTo=None,
+            currentLocation=current_location,
+            travellingTo=travelling_to,
             task=assigned_task
         )
