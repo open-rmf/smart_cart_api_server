@@ -21,7 +21,7 @@ from smart_cart_api_server.controllers.destination_complete import (
 
 from smart_cart_api_server.keycloak.parse_config import keycloak_from_json
 
-from fastapi import FastAPI, HTTPException, Header
+from fastapi import FastAPI, HTTPException, Header, Depends
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from datetime import datetime, timedelta
@@ -44,19 +44,17 @@ if "ENABLE_KEYCLOACK" in os.environ:
 card_table = CSVCardIdADIDTable(os.environ["RMF_SCAS_CARD_ID_CSV"])
 
 
-# Authentication (placeholder)
-def verify_token(token: str):
-    # Your actual token verification logic
-    return True
+def get_auth_headers(header: str | None = Header(None, alias="Authorization")):
+    if header is None:
+        raise HTTPException(status_code=401, detail="Authorization header is missing")
+    return {"Authorization": header}
 
 
 @app.post("/compartment_authorization")
 async def request_compartment_authorization(
-    data: AuthorizationRequest, token: Annotated[str, Header()]
+    data: AuthorizationRequest,
+    auth_header: dict[str, str] = Depends(get_auth_headers),
 ) -> AuthorizationResponse:
-    if not verify_token(token):
-        raise HTTPException(status_code=401, detail="Unauthorized")
-
     authorization_response = get_compartment_authorization(
         card_table,
         keycloak_connection,
@@ -69,11 +67,8 @@ async def request_compartment_authorization(
 
 @app.post("/cart_status_update")
 async def update_cart_status(
-    cart_status: CartStatus, token: Annotated[str, Header()]
+    cart_status: CartStatus, auth_header: dict[str, str] = Depends(get_auth_headers)
 ) -> CartStatus:
-    if not verify_token(token):
-        raise HTTPException(status_code=401, detail="Unauthorized")
-
     # Process the cart status update
     print(f"Received cart status update: {cart_status}")
 
@@ -85,10 +80,8 @@ async def update_cart_status(
 
 @app.post("/destination_complete")
 async def handle_destination_complete(
-    data: DestinationComplete, token: Annotated[str, Header()]
+    data: DestinationComplete, token: str = Header(alias="Authorization")
 ):
-    if not verify_token(token):
-        raise HTTPException(status_code=401, detail="Unauthorized")
     try:
         await notify_rmf_destination_complete(
             data.cartId, data.completedDestination, data.success, api_server_url
@@ -102,12 +95,14 @@ async def handle_destination_complete(
 
 
 @app.get("/robot_status/{robot_id}")
-async def get_status(robot_id: str, token: Annotated[str, Header()]) -> RobotStatus:
+async def get_status(
+    robot_id: str, auth_headers: dict[str, str] = Depends(get_auth_headers)
+) -> RobotStatus:
     print(api_server_url)
-    if not verify_token(token):
-        raise HTTPException(status_code=401, detail="Unauthorized")
     try:
-        robot_status = await get_robot_status(robot_id, api_server=api_server_url)
+        robot_status = await get_robot_status(
+            robot_id, api_server=api_server_url, headers=auth_headers
+        )
         return robot_status
     except Exception as e:
         # Handle potential errors when communicating with RMF
@@ -118,13 +113,12 @@ async def get_status(robot_id: str, token: Annotated[str, Header()]) -> RobotSta
 
 @app.get("/task_status/{task_id}")
 async def retrieve_task_status(
-    task_id: str, token: Annotated[str, Header()]
+    task_id: str, auth_header: dict[str, str] = Depends(get_auth_headers)
 ) -> TaskStatus:
-    if not verify_token(token):
-        raise HTTPException(status_code=401, detail="Unauthorized")
-
     try:
-        task_status = get_task_status(task_id, api_server=api_server_url)
+        task_status = await get_task_status(
+            task_id, api_server=api_server_url, headers=auth_header
+        )
         return task_status
     except Exception as e:
         # Handle potential errors when communicating with RMF
