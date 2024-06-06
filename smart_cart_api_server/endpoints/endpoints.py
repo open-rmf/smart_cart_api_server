@@ -41,7 +41,7 @@ if "ENABLE_KEYCLOACK" in os.environ:
     keycloak_connection = keycloak_from_json("keycloak_config.json")
 
 # Connect to CardID Table
-card_table = CSVCardIdADIDTable("CardId.csv")
+card_table = CSVCardIdADIDTable(os.environ["RMF_SCAS_CARD_ID_CSV"])
 
 
 # Authentication (placeholder)

@@ -16,15 +16,7 @@ def main():
         help="Port to bind to, defaults to 9090",
         default=9090,
     )
-    parser.add_argument(
-        "--rmf_api_server_url",
-        help="RMF API Server URL, defaults to http://localhost:8000, may also be set with `API_SERVER_URL` env",
-        default="http://localhost:8000",
-    )
     args = parser.parse_args()
-
-    if args.rmf_api_server_url:
-        ep.api_server_url = args.rmf_api_server_url
 
     uvicorn.run(
         app,
