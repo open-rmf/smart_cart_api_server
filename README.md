@@ -9,7 +9,7 @@ Ensure you have [`poetry`](https://python-poetry.org/) set up. Once that is set 
 
 To run the API server simply run:
 ```
-smart_cart_api_server
+RMF_SCAS_CARD_ID_CSV=<path-to-card-id-csv> smart_cart_api_server
 ```
 API Docs should be available here at [http://127.0.0.1:9090/docs](http:127.0.0.1:9090/docs).
 
@@ -21,7 +21,7 @@ The api server endpoint can be set via args or the `API_SERVER_URL` environment 
 A dev server with auto reload can be started with
 
 ```
-poetry run uvicorn smart_cart_api_server.endpoints.endpoints:app --reload --port 9090
+RMF_SCAS_CARD_ID_CSV='CardId.csv' poetry run uvicorn smart_cart_api_server.endpoints.endpoints:app --reload --port 9090
 ```
 
 ## Authenticating Cards via API server
