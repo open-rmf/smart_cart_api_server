@@ -61,6 +61,7 @@ async def request_compartment_authorization(
         data.cartId,
         data.cardId,
         api_server=api_server_url,
+        headers=auth_header
     )
     return authorization_response
 
@@ -80,11 +81,11 @@ async def update_cart_status(
 
 @app.post("/destination_complete")
 async def handle_destination_complete(
-    data: DestinationComplete, token: str = Header(alias="Authorization")
+    data: DestinationComplete, auth_headers: dict[str, str] = Depends(get_auth_headers)
 ):
     try:
         await notify_rmf_destination_complete(
-            data.cartId, data.completedDestination, data.success, api_server_url
+            data.cartId, data.completedDestination, data.success, api_server_url, auth_headers
         )
         return data  # Echo back the data
     except Exception as e:
