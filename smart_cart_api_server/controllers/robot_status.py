@@ -9,7 +9,7 @@ from fastapi import HTTPException
 
 async def get_robot_status(
     robot_id: str,
-    api_server="http://localhost:8000/",
+    api_server="http://localhost:8000",
     headers: dict[str, str] | None = None,
 ) -> None | RobotStatus:
     """
@@ -18,7 +18,7 @@ async def get_robot_status(
     headers = headers or {}
     curr_robot = None
     async with aiohttp.ClientSession() as session:
-        async with session.get(f"{api_server}fleets") as response:
+        async with session.get(f"{api_server}/fleets") as response:
 
             fleets = json.loads(await response.text())
 
