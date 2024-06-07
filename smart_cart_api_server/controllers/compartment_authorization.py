@@ -8,7 +8,7 @@ async def get_compartment_authorization(
         card_id_table: AbstractCardIdADIDTable,
         keycloak_client: KeycloakOpenIDConnection| None,
         cart_id: str, card_id: str,
-        api_server: str) -> bool:
+        api_server: str,  headers: dict[str, str] | None = None) -> bool:
     user_info = card_id_table.lookup_cardid(card_id)
     if user_info is None:
         return False
@@ -19,7 +19,7 @@ async def get_compartment_authorization(
         if keycloak_admin.get_user_id(user_info.adid) is None:
             return False
 
-    status = await get_robot_status()
+    status = await get_robot_status(cart_id, api_server, headers)
 
     if status.currentLocationIndex is None:
         return False
