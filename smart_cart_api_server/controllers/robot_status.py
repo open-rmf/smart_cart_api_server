@@ -5,7 +5,7 @@ import aiohttp
 import datetime
 import json
 from fastapi import HTTPException
-
+from urllib.parse import urljoin
 
 async def get_robot_status(
     robot_id: str,
@@ -18,7 +18,7 @@ async def get_robot_status(
     headers = headers or {}
     curr_robot = None
     async with aiohttp.ClientSession(headers=headers) as session:
-        async with session.get(f"{api_server}fleets") as response:
+        async with session.get(urljoin(api_server, "fleets")) as response:
 
             fleets = json.loads(await response.text())
 
