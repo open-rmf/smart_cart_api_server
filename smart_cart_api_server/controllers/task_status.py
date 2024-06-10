@@ -5,13 +5,13 @@ import datetime
 import aiohttp
 from parse import parse
 from fastapi import HTTPException
-
+from urllib.parse import urljoin
 
 async def get_task_status(
     task_id: str, api_server: str, headers: dict[str, str]
 ) -> TaskStatus | None:
     async with aiohttp.ClientSession(headers=headers) as session:
-        async with session.get(f"{api_server}tasks?task_id={task_id}") as response:
+        async with session.get(urljoin(api_server, f"tasks?task_id={task_id}")) as response:
             if response.status != 200:
                 raise HTTPException(
                     status_code=500, detail=f"got error from remote server"
