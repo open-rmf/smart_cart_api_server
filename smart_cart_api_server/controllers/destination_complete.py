@@ -14,7 +14,7 @@ async def notify_rmf_destination_complete(cart_id: str, destination: str, succes
     if status is None:
         raise  HTTPException(status_code=500, detail=f"Failed to get cart ID")
 
-    async with aiohttp.ClientSession(headers) as session:
+    async with aiohttp.ClientSession(headers=headers) as session:
 
         if status.task.taskId is None:
             raise  HTTPException(status_code=500, detail=f"No task underway")
