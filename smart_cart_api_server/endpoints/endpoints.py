@@ -56,7 +56,9 @@ async def request_compartment_authorization(
     data: AuthorizationRequest,
     auth_header: dict[str, str] = Depends(get_auth_headers),
 ) -> AuthorizationResponse:
-    authorization_response = get_compartment_authorization(
+    print("reading compartment auth endpoint")
+
+    authorization_response = await get_compartment_authorization(
         card_table,
         keycloak_connection,
         data.cartId,
@@ -64,6 +66,7 @@ async def request_compartment_authorization(
         api_server=api_server_url,
         headers=auth_header
     )
+
     return authorization_response
 
 
@@ -128,7 +131,7 @@ async def retrieve_task_status(
             status_code=500, detail=f"Error retrieving task status from RMF: {str(e)}"
         )
 
-
+"""
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request, exc):
     return JSONResponse(
@@ -143,3 +146,4 @@ async def validation_exception_handler(request, exc):
         {"message": str(exc.detail), "code": exc.status_code},
         status_code=exc.status_code,
     )
+"""
