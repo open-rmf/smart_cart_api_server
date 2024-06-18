@@ -45,10 +45,10 @@ card_table = CSVCardIdADIDTable(os.environ["RMF_SCAS_CARD_ID_CSV"])
 
 
 def get_auth_headers(header: str | None = Header(None, alias="Authorization")):
-    #if header is None:
-    #    raise HTTPException(status_code=401, detail="Authorization header is missing")
+    if header is None:
+        raise HTTPException(status_code=401, detail="Authorization header is missing")
 
-    return {"Authorization": "hello"}
+    return {"Authorization": header}
 
 
 @app.post("/compartment_authorization")
