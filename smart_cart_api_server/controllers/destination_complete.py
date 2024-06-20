@@ -7,14 +7,15 @@ from smart_cart_api_server.controllers.robot_status import get_robot_status
 from urllib.parse import urljoin
 
 
-# Placeholder for RMF communication function
-async def notify_rmf_destination_complete(cart_id: str, destination: str, success: bool, api_server: str):
+async def notify_rmf_destination_complete(cart_id: str, destination: str, success: bool, api_server: str,  headers: dict[str, str] | None = None,):
     # Get task based on robot ID
-    status = await get_robot_status(cart_id, api_server)
+    headers = headers or {}
+
+    status = await get_robot_status(cart_id, api_server, headers)
     if status is None:
         raise  HTTPException(status_code=500, detail=f"Failed to get cart ID")
 
-    async with aiohttp.ClientSession() as session:
+    async with aiohttp.ClientSession(headers=headers) as session:
 
         if status.task.taskId is None:
             raise  HTTPException(status_code=500, detail=f"No task underway")

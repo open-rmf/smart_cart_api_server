@@ -47,6 +47,7 @@ card_table = CSVCardIdADIDTable(os.environ["RMF_SCAS_CARD_ID_CSV"])
 def get_auth_headers(header: str | None = Header(None, alias="Authorization")):
     if header is None:
         raise HTTPException(status_code=401, detail="Authorization header is missing")
+
     return {"Authorization": header}
 
 
@@ -55,13 +56,17 @@ async def request_compartment_authorization(
     data: AuthorizationRequest,
     auth_header: dict[str, str] = Depends(get_auth_headers),
 ) -> AuthorizationResponse:
-    authorization_response = get_compartment_authorization(
+    print("reading compartment auth endpoint")
+
+    authorization_response = await get_compartment_authorization(
         card_table,
         keycloak_connection,
         data.cartId,
         data.cardId,
         api_server=api_server_url,
+        headers=auth_header
     )
+
     return authorization_response
 
 
@@ -80,11 +85,11 @@ async def update_cart_status(
 
 @app.post("/destination_complete")
 async def handle_destination_complete(
-    data: DestinationComplete, token: str = Header(alias="Authorization")
+    data: DestinationComplete, auth_headers: dict[str, str] = Depends(get_auth_headers)
 ):
     try:
         await notify_rmf_destination_complete(
-            data.cartId, data.completedDestination, data.success, api_server_url
+            data.cartId, data.completedDestination, data.success, api_server_url, auth_headers
         )
         return data  # Echo back the data
     except Exception as e:
@@ -126,7 +131,7 @@ async def retrieve_task_status(
             status_code=500, detail=f"Error retrieving task status from RMF: {str(e)}"
         )
 
-
+"""
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request, exc):
     return JSONResponse(
@@ -141,3 +146,4 @@ async def validation_exception_handler(request, exc):
         {"message": str(exc.detail), "code": exc.status_code},
         status_code=exc.status_code,
     )
+"""

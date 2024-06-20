@@ -17,7 +17,7 @@ async def get_robot_status(
     """
     headers = headers or {}
     curr_robot = None
-    async with aiohttp.ClientSession() as session:
+    async with aiohttp.ClientSession(headers=headers) as session:
         async with session.get(urljoin(api_server, "fleets")) as response:
 
             fleets = json.loads(await response.text())
