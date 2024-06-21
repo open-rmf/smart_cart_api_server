@@ -15,6 +15,7 @@ class TaskDestination(BaseModel):
 
 class TaskStatus(BaseModel):
     taskId: str
+    taskType: str
     dateTime: datetime
     robotId: str 
     fleetId: str
