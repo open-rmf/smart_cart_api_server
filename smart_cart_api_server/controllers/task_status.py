@@ -32,6 +32,7 @@ def parse_task_status(task_state: str) -> TaskStatus | None:
     tasks = json.loads(task_state)
 
     if len(tasks) == 0:
+        print("No tasks found")
         return None
 
     state = TaskState.parse_obj(tasks[0])
@@ -111,7 +112,7 @@ def parse_task_status(task_state: str) -> TaskStatus | None:
         robotId=state.assigned_to.name,
         fleetId=state.assigned_to.group,
         cartId=state.assigned_to.name,  # For now only use cart_id
-        destinations=locations,
+        destinations=locations[:-1], # For now assume end location is the last location.
         currentLocationIndex=current_location,
         travellingToIndex=traveling_to,
         authorizedDepartures=[],

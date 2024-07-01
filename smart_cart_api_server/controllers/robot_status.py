@@ -28,6 +28,7 @@ async def get_robot_status(
                     curr_robot = fleet_state.robots[robot_id]
 
         if curr_robot is None:
+            print (f"Could not get robot {curr_robot}")
             return None
 
         assigned_task = None
