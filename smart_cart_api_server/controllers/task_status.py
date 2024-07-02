@@ -112,7 +112,7 @@ def parse_task_status(task_state: str) -> TaskStatus | None:
         robotId=state.assigned_to.name,
         fleetId=state.assigned_to.group,
         cartId=state.assigned_to.name,  # For now only use cart_id
-        destinations=locations[:-1], # For now assume end location is the last location.
+        destinations=locations[:-1] if current_location is not None and current_location < len(locations) -1 else locations, # For now assume end location is the last location.
         currentLocationIndex=current_location,
         travellingToIndex=traveling_to,
         authorizedDepartures=[],

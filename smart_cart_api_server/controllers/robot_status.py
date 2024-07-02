@@ -28,7 +28,7 @@ async def get_robot_status(
                     curr_robot = fleet_state.robots[robot_id]
 
         if curr_robot is None:
-            print (f"Could not get robot {curr_robot}")
+            print (f"Could not get robot {robot_id}")
             return None
 
         assigned_task = None
@@ -36,6 +36,7 @@ async def get_robot_status(
         current_location = None
         travelling_to = None
         if curr_robot.task_id:
+            print("Retrieving task")
             assigned_task = await get_task_status(
                 curr_robot.task_id, api_server, headers
             )
@@ -53,6 +54,7 @@ async def get_robot_status(
                 travelling_to = assigned_task.destinations[
                     assigned_task.travellingToIndex
                 ]
+            print("Got location")
 
         return RobotStatus(
             dateTime=datetime.datetime.now(),
