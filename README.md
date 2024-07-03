@@ -39,8 +39,6 @@ Add a `keycloak_config.json` to your working directory and set `export ENABLE_KE
 ```json
 {
     "server_url": "http://localhost:8080/",
-    "username": "admin",
-    "password": "YOUR ADMIN PASSWORD",
     "realm": "master",
     "client_id": "YOUR CLIENT",
     "client_secret":"YOUR SECRET"
