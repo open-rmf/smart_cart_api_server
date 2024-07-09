@@ -40,7 +40,7 @@ class TestDataSummary(unittest.TestCase):
             }
         task_status = parse_task_status(json.dumps([test_string]))
         self.assertEqual(task_status.authorizedDepartures, [])
-        self.assertEqual(task_status.destinations, [TaskDestination(name='MB_B1_Part_A_Entry', compartment=None, action='pickup')])
+        self.assertEqual(task_status.destinations, []) # Only 1 end location
         self.assertEqual(task_status.cartId, "cssdmir001")
         self.assertEqual(task_status.status, "completed")
         self.assertEqual(task_status.currentLocationIndex, None)
