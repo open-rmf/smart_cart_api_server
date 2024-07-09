@@ -50,9 +50,12 @@ def parse_task_status(task_state: str) -> TaskStatus | None:
 
     task_type = ""
     key_values = [x.split("=", 1) for x in state.booking.labels]
+    compartments = []
     for k, v in key_values:
         if k == "task_type":
             task_type = v
+        if k == "compartments":
+            compartments = v.split(",")
 
     if task_type not in ["single-pickup-multi-dropoff", "multi-pickup-single-dropoff"]:
         print("Invalid task type")
@@ -85,8 +88,9 @@ def parse_task_status(task_state: str) -> TaskStatus | None:
                 x["detail"],
             )
             loc_idxs[p] = len(locations)
+            compartment = None if len(compartments) <= len(locations) else compartments[len(locations)]
             locations.append(
-                TaskDestination(name=res["place"], compartment=None, action="pickup")
+                TaskDestination(name=res["place"], compartment=compartment, action="pickup")
             )
         else:
             next_loc_idx[p] = len(locations)
