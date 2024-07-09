@@ -8,12 +8,6 @@ def keycloak_from_json(filename: str) -> KeycloakOpenIDConnection:
         if "server_url" not in config:
             raise "Could not find server url in config file"
 
-        if "username" not in config:
-            raise "Could not find username in config file"
-
-        if "password" not in config:
-            raise "Could not find password in config file"
-
         if "realm" not in config:
             raise "Could not find realm in config file"
 
@@ -25,8 +19,6 @@ def keycloak_from_json(filename: str) -> KeycloakOpenIDConnection:
 
         return KeycloakOpenIDConnection(
                         server_url=config["server_url"],
-                        username=config["username"],
-                        password=config["password"],
                         realm_name=config["realm"],
                         client_id=config["client_id"],
                         client_secret_key=config["client_secret"],
