@@ -78,8 +78,8 @@ def parse_task_status(task_state: str) -> TaskStatus | None:
             status=state.status.value,
             taskType=task_type
         )
-
-    for p in sorted(state.phases.keys()):
+    print(state.phases.keys())
+    for p in sorted(state.phases.keys(), key= lambda x: int(x)):
         ### LOTS OF MAGIC
         x = json.loads(state.phases[p].detail.__root__)[0]
         if x["category"] == "Perform action":
