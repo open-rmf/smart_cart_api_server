@@ -28,9 +28,10 @@ class CSVCardIdADIDTable(AbstractCardIdADIDTable):
             for row in spamreader:
                 if len(row) < 2:
                     raise "CSV file is misformatted. File format should be \"CARDID\", \"ADID\" and locations"
-                self.table[row[0]] = UserInfo(row[1], row[2:])
+                self.table[row[0]] = UserInfo(row[1].lower(), row[2:])
 
     def lookup_cardid(self, card_id: str) -> UserInfo|None:
+        card_id = card_id.lower()
         if not card_id in self.table:
             return None
         return self.table[card_id]
