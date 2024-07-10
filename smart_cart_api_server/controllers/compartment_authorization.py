@@ -12,7 +12,7 @@ async def get_compartment_authorization(
     print("Attempting user lookup")
     user_info = card_id_table.lookup_cardid(card_id)
     if user_info is None:
-        print(f"CardID {cart_id} not found")
+        print(f"CardID {card_id} not found")
         return False
 
     print("Attempting keycloak connection")
