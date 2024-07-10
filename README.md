@@ -35,7 +35,7 @@ Note: If there is a change in the file, you will have to restart the server as t
 
 ## Integrating with keycloak and card readers
 
-Add a `keycloak_config.json` to your working directory and set `export ENABLE_KEYCLOACK=1`. The config should look like this:
+Add a `keycloak_config.json` to your working directory and set `export ENABLE_KEYCLOAK=1`. The config should look like this:
 ```json
 {
     "server_url": "http://localhost:8080/",
