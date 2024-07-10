@@ -13,6 +13,7 @@ async def get_compartment_authorization(
     print("Attempting user lookup")
     user_info = card_id_table.lookup_cardid(card_id)
     if user_info is None:
+        print(f"CardID {cart_id} not found")
         return False
 
     print("Attempting keycloak connection")
@@ -31,4 +32,5 @@ async def get_compartment_authorization(
     if status.destinations[status.currentLocationIndex] not in user_info.waypoints:
         return False
 
+    print("Auth was ok")
     return True
