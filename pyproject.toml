@@ -10,7 +10,7 @@ readme = "README.md"
 python = ">=3.10.4,<3.11.0"
 fastapi = "*"
 uvicorn = {extras = ["standard"], version = ">=0.18.2"}
-api_server = {git = "https://github.com/open-rmf/rmf-web.git", subdirectory="packages/api-server", branch="hammer/generic-alerts"}
+api_server = {git = "https://github.com/open-rmf/rmf-web.git", subdirectory="packages/api-server", branch="deploy/hammer-humble"}
 aiohttp = "^3.9.5"
 parse = "^1.20.1"
 
