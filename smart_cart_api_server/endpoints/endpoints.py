@@ -37,7 +37,7 @@ if "API_SERVER_URL" in os.environ:
     api_server_url = os.environ["API_SERVER_URL"]
 
 keycloak_connection = None
-if "ENABLE_KEYCLOACK" in os.environ:
+if "ENABLE_KEYCLOAK" in os.environ:
     keycloak_connection = keycloak_from_json("keycloak_config.json")
 
 # Connect to CardID Table
@@ -45,6 +45,9 @@ card_table = CSVCardIdADIDTable(os.environ["RMF_SCAS_CARD_ID_CSV"])
 
 
 def get_auth_headers(header: str | None = Header(None, alias="Authorization")):
+    if keycloak_connection is None:
+        return {"Authorization": ""}
+
     if header is None:
         raise HTTPException(status_code=401, detail="Authorization header is missing")
 
