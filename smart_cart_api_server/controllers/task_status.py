@@ -77,7 +77,7 @@ def parse_task_status(task_state: str) -> TaskStatus | None:
         )
 
     # This is under the assumption that phase keys are always stringified integers
-    for p in sorted(state.phases.keys(), key=lambda x: int(x)):
+    for p in sorted(state.phases.keys()):
         ### LOTS OF MAGIC
         x = json.loads(state.phases[p].detail.__root__)[0]
         if x["category"] == "Perform action":
