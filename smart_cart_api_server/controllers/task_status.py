@@ -61,9 +61,7 @@ def parse_task_status(task_state: str) -> TaskStatus | None:
     if state.phases is None:
         return TaskStatus(
             taskId=state.booking.id,
-            dateTime=datetime.datetime.fromtimestamp(
-                state.unix_millis_start_time, tz=datetime.timezone.utc
-            ),
+            dateTime=datetime.datetime.now(),
             robotId=state.assigned_to.name,
             fleetId=state.assigned_to.group,
             cartId=state.assigned_to.name,  # For now only use cart_id
@@ -113,9 +111,7 @@ def parse_task_status(task_state: str) -> TaskStatus | None:
 
     return TaskStatus(
         taskId=state.booking.id,
-        dateTime=datetime.datetime.fromtimestamp(
-            state.unix_millis_start_time, tz=datetime.timezone.utc
-        ),
+        dateTime=datetime.datetime.now(),
         robotId=state.assigned_to.name,
         fleetId=state.assigned_to.group,
         cartId=state.assigned_to.name,  # For now only use cart_id
