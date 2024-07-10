@@ -4,20 +4,17 @@ from typing import Optional, List
 
 
 # Data Models (adjust if needed)
-class Location(BaseModel):
-    name: str
-    compartment: Optional[str] = None
-
 class TaskDestination(BaseModel):
     name: str
     compartment: Optional[str] = None
     action: str  # "pickup", "dropoff"
+    staging: bool
 
 class TaskStatus(BaseModel):
     taskId: str
     taskType: str
     dateTime: datetime
-    robotId: str 
+    robotId: str
     fleetId: str
     cartId: str
     destinations: list[TaskDestination]

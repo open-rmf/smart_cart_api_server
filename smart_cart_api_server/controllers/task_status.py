@@ -87,16 +87,23 @@ def parse_task_status(task_state: str) -> TaskStatus | None:
             loc_idxs[p] = len(locations)
             compartment = None if len(compartments) <= len(locations) else compartments[len(locations)]
             locations.append(
-                TaskDestination(name=res["place"], compartment=compartment, action="pickup")
+                TaskDestination(name=res["place"], compartment=compartment, action="pickup", staging=False)
             )
         else:
             next_loc_idx[p] = len(locations)
 
+    # These workflows are extremely specific to the task types
     if task_type == "single-pickup-multi-dropoff":
+        # First pickup and final dropoff will notify the smart cart to wait
+        # indefinitely
+        locations[0].staging = True
+        locations[-1].staging = True
         for i in range(1, len(locations)):
            locations[i].action = "dropoff"
-    else:
+    elif task_type == "multi-pickup-single-dropoff":
+        # Final dropoff will notify the smart cart to wait indefinitely
         locations[-1].action = "dropoff"
+        locations[-1].staging = True
 
     current_location = None
     traveling_to = None
