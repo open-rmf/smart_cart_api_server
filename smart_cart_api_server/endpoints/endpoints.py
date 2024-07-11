@@ -12,13 +12,9 @@ from smart_cart_api_server.models.tables.CardIdADIDTable import CSVCardIdADIDTab
 
 from smart_cart_api_server.controllers.robot_status import get_robot_status
 from smart_cart_api_server.controllers.task_status import get_task_status
-from smart_cart_api_server.controllers.compartment_authorization import (
-    get_compartment_authorization,
-)
-from smart_cart_api_server.controllers.destination_complete import (
-    notify_rmf_destination_complete,
-)
-
+from smart_cart_api_server.controllers.compartment_authorization import get_compartment_authorization
+from smart_cart_api_server.controllers.destination_complete import notify_rmf_destination_complete
+from smart_cart_api_server.controllers.update_cart_status import update_cart_status
 from smart_cart_api_server.keycloak.parse_config import keycloak_from_json
 
 from fastapi import FastAPI, HTTPException, Header, Depends
@@ -74,16 +70,12 @@ async def request_compartment_authorization(
 
 
 @app.post("/cart_status_update")
-async def update_cart_status(
+async def cart_status_update(
     cart_status: CartStatus, auth_header: dict[str, str] = Depends(get_auth_headers)
 ) -> CartStatus:
     # Process the cart status update
     print(f"Received cart status update: {cart_status}")
-
-    # You would typically save the status to a database
-
-    # Return a success response
-    return cart_status  # Echo back the received data
+    return await update_cart_status(cart_status, api_server_url, auth_header)  # Echo back the received data
 
 
 @app.post("/destination_complete")
