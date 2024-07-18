@@ -40,8 +40,6 @@ Add a `keycloak_config.json` to your working directory and set `export ENABLE_KE
 {
     "server_url": "http://localhost:8080/",
     "realm": "master",
-    "client_id": "YOUR CLIENT",
-    "client_secret":"YOUR SECRET"
 }
 ```
 Note: we do need the admin api in order to perform some of the verification.
