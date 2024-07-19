@@ -18,8 +18,7 @@ async def get_compartment_authorization(
     print("Attempting keycloak connection")
     # Check if user exists
     if keycloak_client is not None:
-        keycloak_token = await keycloak_client.get_token()
-        if not await keycloak_client.check_user_exists(keycloak_token, user_info.adid):
+        if not await keycloak_client.check_user_exists(headers, user_info.adid):
             print("User was not found in keycloak")
             return False
 
