@@ -49,13 +49,21 @@ def parse_task_status(task_state: str) -> TaskStatus | None:
     next_loc_idx = {}
 
     task_type = ""
-    key_values = [x.split("=", 1) for x in state.booking.labels]
     compartments = []
-    for k, v in key_values:
-        if k == "task_type":
-            task_type = v
-        if k == "compartments":
-            compartments = v.split(",")
+    for label in state.booking.labels:
+        label_json = json.loads(label)
+        if "description" not in label_json:
+            continue
+
+        label_description = label_json["description"]
+        if "task_type" in label_description:
+            task_type = label_description["task_type"]
+        if "compartments" in label_description:
+            compartments = label_description["compartments"].split(",")
+
+    if task_type == "":
+        print("No booking labels available to parse")
+        return None
 
     if task_type not in ["single-pickup-multi-dropoff", "multi-pickup-single-dropoff"]:
         print("Invalid task type")
